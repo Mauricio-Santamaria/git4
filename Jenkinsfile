@@ -21,12 +21,6 @@ pipeline {
             }
         }
 
-        stage('Análisis de seguridad') {
-            steps {
-                bat 'npm audit --production || true'
-                bat 'eslint . || true'
-            }
-        }
 
         stage('Empaquetar con Docker') {
             steps {

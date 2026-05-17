@@ -14,21 +14,39 @@ pipeline {
             }
         }
 
-        stage('Pruebas') {
+        stage('Levantar servidor') {
             steps {
-                // Aquí puedes integrar Postman/Newman o Jest
-                bat 'echo "Ejecutando pruebas..."'
+                // Ejecuta tu API en segundo plano
+                bat 'start /B node server.js'
+                // Espera unos segundos para que arranque
+                bat 'ping -n 5 127.0.0.1 > nul'
             }
         }
-        stage('Despliegue Local') {
+
+        stage('Pruebas reales con Newman') {
             steps {
-                bat 'node server.js'   // Levanta tu aplicación Node.js
-                bat 'curl http://localhost:3001/api/menu'
+                // Ejecuta pruebas de Postman exportadas en JSON
+                bat 'newman run tests/postman_collection.json --env-var baseUrl=http://localhost:3001'
             }
-}
+        }
 
+        stage('Análisis de seguridad') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    bat 'npm audit --production'
+                }
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    bat 'npm run lint'
+                }
+            }
+        }
 
-      
+        stage('Validación de despliegue') {
+            steps {
+                // Verifica que el endpoint responda
+                powershell 'Invoke-WebRequest http://localhost:3001/api/menu'
+            }
+        }
     }
 
     post {

@@ -20,13 +20,15 @@ pipeline {
                 bat 'echo "Ejecutando pruebas..."'
             }
         }
-
-
         stage('Despliegue Local') {
             steps {
-                bat 'http://localhost:3001/'
+                bat 'node server.js'   // Levanta tu aplicación Node.js
+                bat 'curl http://localhost:3001/api/menu'
             }
-        }
+}
+
+
+      
     }
 
     post {

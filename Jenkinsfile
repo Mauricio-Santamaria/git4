@@ -22,15 +22,9 @@ pipeline {
         }
 
 
-        stage('Empaquetar con Docker') {
-            steps {
-                bat 'docker build -t restaurante-api .'
-            }
-        }
-
         stage('Despliegue Local') {
             steps {
-                bat 'docker run -d -p 3001:3001 restaurante-api'
+                bat 'http://localhost:3001/'
             }
         }
     }

@@ -10,33 +10,33 @@ pipeline {
 
         stage('Instalar dependencias') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('Pruebas') {
             steps {
                 // Aquí puedes integrar Postman/Newman o Jest
-                sh 'echo "Ejecutando pruebas..."'
+                bat 'echo "Ejecutando pruebas..."'
             }
         }
 
         stage('Análisis de seguridad') {
             steps {
-                sh 'npm audit --production || true'
-                sh 'eslint . || true'
+                bat 'npm audit --production || true'
+                bat 'eslint . || true'
             }
         }
 
         stage('Empaquetar con Docker') {
             steps {
-                sh 'docker build -t restaurante-api .'
+                bat 'docker build -t restaurante-api .'
             }
         }
 
         stage('Despliegue Local') {
             steps {
-                sh 'docker run -d -p 3001:3001 restaurante-api'
+                bat 'docker run -d -p 3001:3001 restaurante-api'
             }
         }
     }
